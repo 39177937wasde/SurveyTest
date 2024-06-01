@@ -1,0 +1,87 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .custom-container {
+            max-width: 600px; /* 設置容器的最大寬度 */
+        }
+    </style>
+</head>
+
+<body>
+    <!--
+        Validation
+            https://getbootstrap.com/docs/5.0/forms/validation/
+     -->
+    <div class="container mt-5">
+        <main>
+            <div class="container custom-container">
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-primary">登入</span>
+                </h4>
+                <form class="card p-2 needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+                        <div class="invalid-feedback">
+                            請輸入合法的Email
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputPassword1" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" required>
+                        <div class="invalid-feedback">
+                            請輸入你的密碼
+                        </div>
+                    </div>
+                    <!--
+                        <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                        <label class="form-check-label" for="exampleCheck1">記住密碼</label>
+                        <div id="help" class="form-text">請不要在公共電腦上記住密碼</div>
+                    </div>
+                            -->
+
+
+                    <button type="submit" class="btn btn-primary">登入</button>
+                </form>
+            </div>
+        </main>
+
+    </div>
+
+
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+</body>
+
+</html>

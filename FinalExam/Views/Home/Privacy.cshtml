@@ -1,0 +1,180 @@
+﻿@{
+    ViewData["Title"] = "問卷設計頁面";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .question-container {
+            margin-bottom: 20px;
+        }
+
+        .option-container {
+            margin-bottom: 10px;
+        }
+
+        .question-type {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">問卷設計頁面</h1>
+        <div id="questions">
+            <!-- 初始的一个问题 -->
+            <div class="question-container card p-3 mb-3">
+                <div class="form-group">
+                    <label for="question-1">問題 1</label>
+                    <input type="text" class="form-control" id="question-1" placeholder="輸入你的問題">
+                </div>
+                <div class="form-group question-type">
+                    <label for="question-type-1">選擇問題類型</label>
+                    <select class="form-control question-type-select" id="question-type-1">
+                        <option value="multiple-choice">多選</option>
+                        <option value="single-choice">單選</option>
+                        <option value="text">問答</option>
+                    </select>
+                </div>
+                <div class="options">
+                    <div class="option-container">
+                        <input type="text" class="form-control" placeholder="選項 1">
+                    </div>
+                    <div class="option-container">
+                        <input type="text" class="form-control" placeholder="選項 2">
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm add-option">添加選項</button>
+                <button class="btn btn-danger btn-sm remove-question">删除問題</button>
+            </div>
+        </div>
+        <button id="add-question" class="btn btn-primary">添加問題</button>
+        <button id="submit-questionnaire" class="btn btn-primary">提交問卷</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let questionCount = 1;
+
+            // 添加问题
+            $('#add-question').click(function () {
+                questionCount++;
+                const questionHtml = `
+                            <div class="question-container card p-3 mb-3">
+                                <div class="form-group">
+                                    <label for="question-${questionCount}">問題 ${questionCount}</label>
+                                    <input type="text" class="form-control" id="question-${questionCount}" placeholder="輸入你的問題">
+                                </div>
+                                <div class="form-group question-type">
+                                    <label for="question-type-${questionCount}">選擇問題類型</label>
+                                    <select class="form-control question-type-select" id="question-type-${questionCount}">
+                                        <option value="multiple-choice">多選</option>
+                                        <option value="single-choice">單選</option>
+                                        <option value="text">問答</option>
+                                    </select>
+                                </div>
+                                <div class="options">
+                                    <div class="option-container">
+                                        <input type="text" class="form-control" placeholder="選項 1">
+                                    </div>
+                                    <div class="option-container">
+                                        <input type="text" class="form-control" placeholder="選項 2">
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary btn-sm add-option">添加選項</button>
+                                <button class="btn btn-danger btn-sm remove-question">删除問題</button>
+                            </div>
+                        `;
+                $('#questions').append(questionHtml);
+            });
+
+            // 动态绑定事件处理
+            $(document).on('click', '.add-option', function () {
+                const optionCount = $(this).siblings('.options').children('.option-container').length + 1;
+                const optionHtml = `
+                            <div class="option-container">
+                                <input type="text" class="form-control" placeholder="選項 ${optionCount}">
+                            </div>
+                        `;
+                $(this).siblings('.options').append(optionHtml);
+            });
+
+            $(document).on('click', '.remove-question', function () {
+                $(this).closest('.question-container').remove();
+            });
+
+            $(document).on('change', '.question-type-select', function () {
+                const questionType = $(this).val();
+                const optionsContainer = $(this).closest('.question-container').find('.options');
+
+                if (questionType === 'text') {
+                    optionsContainer.empty();
+                    optionsContainer.append(`
+                                <div class="option-container">
+                                    <textarea class="form-control" rows="3" placeholder="用戶回答區域"></textarea>
+                                </div>
+                            `);
+                    $(this).siblings('.add-option').hide();
+                } else {
+                    if (optionsContainer.find('textarea').length) {
+                        optionsContainer.empty();
+                        optionsContainer.append(`
+                                    <div class="option-container">
+                                        <input type="text" class="form-control" placeholder="選項 1">
+                                    </div>
+                                    <div class="option-container">
+                                        <input type="text" class="form-control" placeholder="選項 2">
+                                    </div>
+                                `);
+                    }
+                    $(this).siblings('.add-option').show();
+                }
+            });
+
+            $('#submit-questionnaire').click(function () {
+                const questionnaire = {
+                    OwnerID: 1, // 假設 OwnerID 為 1
+                    Tag: "Example Tag",
+                    EndTime: "2024-12-31T23:59:59",
+                    Questions: []
+                };
+
+                $('.question-container').each(function (index) {
+                    const question = {
+                        QuestionText: $(this).find('input[type="text"]').first().val(),
+                        QuestionType: $(this).find('.question-type-select').val(),
+                        Options: []
+                    };
+
+                    $(this).find('.option-container input[type="text"]').each(function () {
+                        question.Options.push({ OptionText: $(this).val() });
+                    });
+
+                    questionnaire.Questions.push(question);
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/Survay",
+                    data: JSON.stringify(questionnaire),
+                    contentType: "application/json",
+                    success: function () {
+                        alert("問卷提交成功！");
+                    },
+                    error: function () {
+                        alert("提交失敗，請重試！");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

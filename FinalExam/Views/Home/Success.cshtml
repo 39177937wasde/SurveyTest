@@ -1,0 +1,12 @@
+﻿@{
+    ViewBag.Title = "Login Success";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewBag.SuccessMessage</h2>
+
+<script>
+    setTimeout(function () {
+        window.location.href = '@Url.Action("Index", "Home")';
+    }, 5000); // 5 seconds delay
+</script>

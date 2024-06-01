@@ -1,0 +1,39 @@
+﻿@{
+    ViewData["Title"] = "我的問卷";
+}
+
+<h2>我的問卷</h2>
+<div id="questionnaires"></div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "/api/Survay/get-user-questionnaires",
+            success: function (data) {
+                console.log("Received data:", data); // 输出接收到的数据到控制台
+
+                var html = "";
+                data.forEach(function (questionnaire) {
+                    html += "<div class='questionnaire-item'>" +
+                        "<h3>" + questionnaire.tag + "</h3>" +
+                        "<p>結束時間: " + new Date(questionnaire.endTime).toLocaleString() + "</p>" +
+                        "<button class='btn btn-primary edit-questionnaire' data-id='" + questionnaire.questionnaireID + "'>編輯</button>" +
+                        "</div>";
+                });
+                $("#questionnaires").html(html);
+
+                // 绑定编辑按钮的点击事件
+                $('.edit-questionnaire').click(function () {
+                    var questionnaireID = $(this).data('id');
+                    window.location.href = '/SurveyView/Edit/' + questionnaireID;
+                });
+            },
+            error: function (xhr, status, error) {
+                console.log("Error: ", xhr.responseText); // 输出错误信息到控制台
+                $("#questionnaires").html("<p>無法獲取問卷，請重試。</p>");
+            }
+        });
+    });
+</script>

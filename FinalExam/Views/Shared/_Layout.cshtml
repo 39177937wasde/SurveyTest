@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebApplication1</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
+
+</head>
+<body>
+    <header>
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-warning border-bottom box-shadow mb-3">
+
+                <div class="container-fluid ">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">問卷調查平台</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold" asp-area="" asp-controller="Home" asp-action="Index">首頁</a>
+
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold" asp-area="" asp-controller="Home" asp-action="Privacy">問卷</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold" asp-area="" asp-controller="AddUser" asp-action="Register">註冊</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link fw-bold" asp-area="" asp-controller="UserLogin" asp-action="Login">登入</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link fw-bold dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    會員
+                                </a>
+
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li>
+                                        <a class="dropdown-item"  href="/SurveyView/UserQuestionnaires">我的問卷</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">修改個人資料</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="" asp-controller="UserLogin" asp-action="Login">登入</a>
+                                    </li>
+                                    <li>
+                                        <form asp-controller="UserLogin" asp-action="Logout" method="post">
+                                            <button type="submit" class="btn btn-link">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div>歡迎 @ViewBag.Username!</div>
+                    }
+                    else
+                    {
+                        <div>未登入</div>
+                    }
+                </div>
+            </nav>
+        </header>
+         
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <!--
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - WebApplication1 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

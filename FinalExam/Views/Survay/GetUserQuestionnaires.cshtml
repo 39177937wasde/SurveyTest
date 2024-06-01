@@ -1,0 +1,35 @@
+﻿<div class="container mt-5">
+    <h1 class="mb-4">問卷設計頁面</h1>
+    <div id="user-questionnaires"></div>
+    <div id="questions">
+        <!-- 初始的一个问题 -->
+        <div class="question-container card p-3 mb-3">
+            <!-- ... -->
+        </div>
+    </div>
+    <button id="add-question" class="btn btn-primary">添加問題</button>
+    <button id="submit-questionnaire" class="btn btn-primary">提交問卷</button>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // 獲取當前用戶的問卷
+        $.ajax({
+            type: "GET",
+            url: "/api/Survay/questionnaires",
+            success: function (data) {
+                let questionnaireList = '<h2>我的問卷</h2><ul>';
+                data.forEach(function (questionnaire) {
+                    questionnaireList += '<li>' + questionnaire.Tag + '</li>';
+                });
+                questionnaireList += '</ul>';
+                $('#user-questionnaires').html(questionnaireList);
+            },
+            error: function () {
+                $('#user-questionnaires').html('<p>無法獲取問卷列表。</p>');
+            }
+        });
+
+        // 其他代碼
+    });
+</script>
