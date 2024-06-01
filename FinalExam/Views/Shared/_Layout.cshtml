@@ -7,7 +7,21 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
+    <style>
+        /* Custom CSS to show dropdown on hover */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
 
+        .dropdown-menu {
+            margin-top: 0;
+        }
+
+        /* Hide the arrow */
+        .nav-item .dropdown-toggle::after {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <header>
