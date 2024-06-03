@@ -15,7 +15,8 @@ namespace FinalExam.Data
         public DbSet<Questionnaire> Questionnaires { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Option> Options { get; set; }
-        public DbSet<QuestionnaireRespond> QuestionnaireResponds { get; set; }
+        public DbSet<QuestionnaireRespond> QuestionnaireRespond { get; set; }
+
         public async Task<List<Questionnaire>> GetUserQuestionnaires(int userId)
         {
             return await Questionnaires

@@ -24,10 +24,22 @@ namespace FinalExam.Controllers
         }
         public IActionResult Index()
         {
+            if (ModelState.IsValid)
+            {
+                // Handle your login logic here
+                TempData["Message"] = "成功登入";
+                return RedirectToAction("Login");
+            }
             return View();
         }
         public IActionResult ForgotPassword()
         {
+            if (ModelState.IsValid)
+            {
+                // Handle your password reset logic here
+                TempData["Message"] = "驗證信已經送出";
+                return RedirectToAction("ForgotPassword");
+            }
             return View();
         }
         public IActionResult changePassword()

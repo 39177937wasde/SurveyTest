@@ -18,7 +18,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/UserLogin/Login"; // µn¤J¸ô®|
+        options.LoginPath = "/UserLogin/Login";
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
     });
@@ -64,8 +64,15 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
-    name: "surveyview",
-    pattern: "{controller=SurveyView}/{action=UserQuestionnaires}/{id?}");
+       name: "surveyview",
+       pattern: "SurveyView/{action=Index}/{id?}",
+       defaults: new { controller = "SurveyView" });
+
+app.MapControllerRoute(
+    name: "survey",
+    pattern: "api/surveys/{action}/{id?}",
+    defaults: new { controller = "Survey" });
+
 
 
 app.MapControllers();

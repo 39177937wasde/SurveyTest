@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>已填寫的問卷</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>已填寫的問卷</h1>
+        <div id="completed-surveys"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function loadCompletedSurveys() {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/Survay/completed-surveys",
+                    success: function (data) {
+                        console.log("Received data:", JSON.stringify(data, null, 2)); // Log the received data for debugging
+
+                        // Flatten the JSON structure if it contains $values
+                        if (data.$values) {
+                            data = data.$values;
+                        }
+
+                        if (!Array.isArray(data)) {
+                            console.error("Expected an array but received:", data);
+                            $("#completed-surveys").html("<p>無法獲取已完成問卷，請重試。</p>");
+                            return;
+                        }
+
+                        let surveysHtml = "";
+                        data.forEach(survey => {
+                            surveysHtml += `
+                                        <div class="survey-container card p-3 mb-3">
+                                            <h2>${survey.tag}</h2>
+                                            <p>作者: ${survey.owner.name}</p>
+                                            <p>結束時間: ${new Date(survey.endTime).toLocaleString()}</p>
+                                            <button class="btn btn-secondary" onclick="window.location.href='/SurveyView/detail?id=${survey.questionnaireID}'">重新填寫</button>
+                                        </div>
+                                    `;
+                        });
+                        $('#completed-surveys').html(surveysHtml);
+                    },
+                    error: function () {
+                        alert("Failed to load completed surveys.");
+                    }
+                });
+            }
+
+            loadCompletedSurveys();
+        });
+    </script>
+</body>
+</html>

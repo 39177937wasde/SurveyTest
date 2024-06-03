@@ -7,74 +7,91 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebApplication1.styles.css" asp-append-version="true" />
+    <style>
+        /* Custom CSS to show dropdown on hover */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
 
+        .dropdown-menu {
+            margin-top: 0;
+        }
+
+        /* Hide the arrow */
+        .nav-item .dropdown-toggle::after {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <header>
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-warning border-bottom box-shadow mb-3">
-
-                <div class="container-fluid ">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">問卷調查平台</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link fw-bold" asp-area="" asp-controller="Home" asp-action="Index">首頁</a>
-
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link fw-bold" asp-area="" asp-controller="Home" asp-action="Privacy">問卷</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link fw-bold" asp-area="" asp-controller="AddUser" asp-action="Register">註冊</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link fw-bold" asp-area="" asp-controller="UserLogin" asp-action="Login">登入</a>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link fw-bold dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    會員
-                                </a>
-
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li>
-                                        <a class="dropdown-item"  href="/SurveyView/UserQuestionnaires">我的問卷</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Index">修改個人資料</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-area="" asp-controller="UserLogin" asp-action="Login">登入</a>
-                                    </li>
-                                    <li>
-                                        <form asp-controller="UserLogin" asp-action="Logout" method="post">
-                                            <button type="submit" class="btn btn-link">Logout</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-warning border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">問卷調查平台</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" asp-area="" asp-controller="Home" asp-action="Index">首頁</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" asp-area="" asp-controller="Home" asp-action="Privacy">問卷</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold" asp-area="" asp-controller="UserLogin" asp-action="Login" asp-authorize="false">登入</a>
+                        </li>
+                        
+                        <li class="nav-item dropdown" asp-authorize>
+                            <a class="nav-link fw-bold dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                會員
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li class="nav-item">
+                                    <a class="dropdown-item" asp-area="" asp-controller="SurveyView" asp-action="AvailableSurveys">全部的問卷</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="dropdown-item" asp-area="" asp-controller="SurveyView" asp-action="completedSurveys">已經填過的問卷</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/SurveyView/UserQuestionnaires">我的問卷</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="User" asp-action="changeProfile">修改個人資料</a>
+                                </li>
+                                <li>
+                                    <form asp-controller="UserLogin" asp-action="Logout" method="post">
+                                        <button type="submit" class="dropdown-item">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div>
+                        @await Component.InvokeAsync("UserName")
                     </div>
+                    <script>
+                        $(document).ready(function () {
+                            var message = '@TempData["Message"]';
+                            if (message) {
+                                alert(message);
+                            }
+                        });
+                    </script>
                 </div>
+            </div>
+        </nav>
+    </header>
 
-                <div>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <div>歡迎 @ViewBag.Username!</div>
-                    }
-                    else
-                    {
-                        <div>未登入</div>
-                    }
-                </div>
-            </nav>
-        </header>
-         
     <div class="container">
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Message"]
+            </div>
+        }
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

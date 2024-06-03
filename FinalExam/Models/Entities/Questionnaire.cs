@@ -16,6 +16,7 @@ namespace FinalExam.Models.Entities
         public string State { get; set; }
         [ForeignKey("OwnerID")]
         public User Owner { get; set; }
+        public DateTime CreatedDate { get; set; } // 新增欄位
         [JsonIgnore]
         public ICollection<Question> Questions { get; set; }
     }

@@ -7,6 +7,8 @@ namespace FinalExam.Models.Entities
         [Key]
         public int RespondID { get; set; }
         public int QuestionnaireID { get; set; }
+        public int QuestionID { get; set; }
+        public int UserID { get; set; }
         public string Answer { get; set; }
         public Questionnaire Questionnaire { get; set; }
     }

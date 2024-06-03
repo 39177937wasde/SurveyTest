@@ -48,6 +48,7 @@ namespace FinalExam.Controllers
             {
                 await dbManager.User.AddAsync(NewUser);
                 await dbManager.SaveChangesAsync();
+                TempData["Message"] = "註冊成功";
                 return RedirectToAction("Index", "Home");
             }
             else 

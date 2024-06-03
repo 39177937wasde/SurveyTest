@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可用的問卷</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .question-container {
+            margin-bottom: 20px;
+        }
+
+        .option-container {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>可用的問卷</h1>
+        <div id="surveys"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function loadSurveys() {
+                $.ajax({
+                    type: "GET",
+                    url: "/api/Survay/available-surveys",
+                    success: function (data) {
+                        console.log("Received data:", data); // 調試輸出數據
+                        if (data.$values) {
+                            data = data.$values; // 從 $values 提取數組
+                        }
+                        if (!Array.isArray(data)) {
+                            console.error("預期應該是數組但接收到:", data);
+                            $("#surveys").html("<p>無法獲取問卷列表，請重試。</p>");
+                            return;
+                        }
+                        let surveysHtml = "";
+                        if (data.length === 0) {
+                            surveysHtml = "<p>目前沒有問卷。</p>";
+                        } else {
+                            data.forEach(survey => {
+                                surveysHtml += `
+                                            <div class="survey-container card p-3 mb-3">
+                                                <h2>${survey.tag}</h2>
+                                                <p>作者: ${survey.owner ? survey.owner.name : "未知"}</p>
+                                                <p>創建時間: ${new Date(survey.createdDate).toLocaleString()}</p>
+                                                <p>結束時間: ${new Date(survey.endTime).toLocaleString()}</p>
+                                                <button class="btn btn-primary" onclick="fillSurvey(${survey.questionnaireID})">填寫問卷</button>
+                                            </div>
+                                        `;
+                            });
+                        }
+                        $('#surveys').html(surveysHtml);
+                    },
+                    error: function () {
+                        alert("獲取問卷列表失敗。");
+                    }
+                });
+            }
+
+            window.fillSurvey = function (surveyID) {
+                window.location.href = `/SurveyView/detail?id=${surveyID}`;
+            }
+
+            loadSurveys();
+        });
+
+    </script>
+</body>
+</html>

@@ -1,8 +1,4 @@
-﻿@{
-    ViewData["Title"] = "問卷設計頁面";
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,6 +22,10 @@
 
     <div class="container mt-5">
         <h1 class="mb-4">問卷設計頁面</h1>
+        <div class="form-group">
+            <label for="tag">標籤</label>
+            <input type="text" class="form-control" id="tag" placeholder="輸入標籤">
+        </div>
         <div id="questions">
             <!-- 初始的一个问题 -->
             <div class="question-container card p-3 mb-3">
@@ -63,6 +63,22 @@
     <script>
         $(document).ready(function () {
             let questionCount = 1;
+            let userId;
+
+            // 获取当前用户 ID
+            $.ajax({
+                type: "GET",
+                url: "/api/Survay/current-user-id",
+                success: function (response) {
+                    console.log("User ID fetched successfully:", response); // 調試輸出
+                    userId = response.userId;
+                },
+                error: function (xhr, status, error) {
+                    console.error("Failed to fetch user ID:", status, error); // 調試輸出
+                    console.log("Response text:", xhr.responseText); // 這行會輸出 API 返回的錯誤訊息
+                    alert("无法获取用户ID，请重新登录！");
+                }
+            });
 
             // 添加问题
             $('#add-question').click(function () {
@@ -140,11 +156,24 @@
             });
 
             $('#submit-questionnaire').click(function () {
+                if (!userId) {
+                    alert("無法獲取用戶ID，請稍後重試！");
+                    return;
+                }
+
+                console.log("Submit button clicked");
+
+                const tag = $('#tag').val();
                 const questionnaire = {
-                    OwnerID: 1, // 假設 OwnerID 為 1
-                    Tag: "Example Tag",
+                    OwnerID: userId,
+                    Tag: tag,
                     EndTime: "2024-12-31T23:59:59",
-                    Questions: []
+                    State: "Active",
+                    Questions: [],
+                    Owner: {
+                        UserID: userId,
+                        Name: "test"  // 你可能需要從某個地方獲取用戶名
+                    }
                 };
 
                 $('.question-container').each(function (index) {
@@ -161,20 +190,26 @@
                     questionnaire.Questions.push(question);
                 });
 
+                console.log("Sending questionnaire:", questionnaire);
                 $.ajax({
                     type: "POST",
-                    url: "/api/Survay",
+                    url: "/api/Survay/create-survey",
                     data: JSON.stringify(questionnaire),
                     contentType: "application/json",
                     success: function () {
+                        console.log("Submission successful!");
                         alert("問卷提交成功！");
                     },
-                    error: function () {
+                    error: function (xhr, status, error) {
+                        console.error("Submission failed:", status, error);
+                        console.log("Response text:", xhr.responseText); // 這行會輸出 API 返回的錯誤訊息
                         alert("提交失敗，請重試！");
                     }
                 });
             });
+
         });
+
     </script>
 </body>
 </html>

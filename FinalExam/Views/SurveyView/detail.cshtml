@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問卷詳情</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>問卷詳情</h1>
+        <div id="survey-details"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const surveyID = urlParams.get('id');
+            console.log(`Survey ID: ${surveyID}`);
+
+            function loadSurveyDetails(surveyID) {
+                $.ajax({
+                    type: "GET",
+                    url: `/api/Survay/get-survey/${surveyID}`,
+                    success: function (survey) {
+                        console.log("Received survey data:", survey);
+
+                        let questions = survey.questions.$values || survey.questions;
+                        console.log("Questions:", questions);
+
+                        if (Array.isArray(questions)) {
+                            let surveyHtml = `
+                                <div class="survey-form">
+                                    <h2>${survey.tag}</h2>
+                                    <p>作者: ${survey.owner ? survey.owner.name : 'undefined'}</p>
+                                    ${questions.map((question, index) => `
+                                        <div class="question-container card p-3 mb-3">
+                                            <div class="form-group">
+                                                <label for="question-${question.questionID}">Question ${index + 1}: ${question.questionText}</label>
+                                                ${question.questionType === 'text' ? `
+                                                    <textarea class="form-control" id="question-${question.questionID}" name="question-${question.questionID}" rows="3"></textarea>
+                                                ` : question.questionType === 'multiple-choice' ? (Array.isArray(question.options.$values || question.options) ? (question.options.$values || question.options).map(option => `
+                                                    <div class="option-container">
+                                                        <input type="checkbox" id="option-${option.optionID}" name="question-${question.questionID}" value="${option.optionText}"> ${option.optionText}
+                                                    </div>
+                                                `).join('') : `<p>No options available</p>`) : (Array.isArray(question.options.$values || question.options) ? (question.options.$values || question.options).map(option => `
+                                                    <div class="option-container">
+                                                        <input type="radio" id="option-${option.optionID}" name="question-${question.questionID}" value="${option.optionText}"> ${option.optionText}
+                                                    </div>
+                                                `).join('') : `<p>No options available</p>`)}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                    <button class="btn btn-success" onclick="submitResponse(${survey.questionnaireID})">提交</button>
+                                </div>
+                            `;
+                            $('#survey-details').html(surveyHtml);
+                        } else {
+                            console.error("Questions are not in the expected format:", questions);
+                        }
+                    },
+                    error: function () {
+                        alert("Failed to load survey.");
+                    }
+                });
+            }
+
+            window.submitResponse = function (surveyID) {
+                const responses = [];
+                $(`[name^=question-]`).each(function () {
+                    const questionID = $(this).attr('name').split('-')[1];
+                    if ($(this).is(':checked')) {
+                        const answer = $(this).val();
+                        console.log(`Question ID: ${questionID}, Answer: ${answer}`);
+                        // 如果已經存在該 questionID 的回應，則追加答案
+                        const existingResponse = responses.find(r => r.QuestionID === questionID);
+                        if (existingResponse) {
+                            existingResponse.Answer += `,${answer}`;
+                        } else {
+                            responses.push({ QuestionID: questionID, Answer: answer });
+                        }
+                    }
+                });
+
+                $(`textarea[id^=question-]`).each(function () {
+                    const questionID = $(this).attr('id').split('-')[1];
+                    const answer = $(this).val();
+                    console.log(`Question ID: ${questionID}, Answer: ${answer}`);
+                    if (answer) {
+                        responses.push({ QuestionID: questionID, Answer: answer });
+                    }
+                });
+
+                const responseDto = { QuestionnaireID: surveyID, QuestionResponses: responses };
+
+                console.log("Submitting response:", responseDto);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/Survay/submit-response",
+                    data: JSON.stringify(responseDto),
+                    contentType: "application/json",
+                    success: function () {
+                        alert("Response submitted successfully!");
+                        window.location.href = document.referrer; // 返回上一頁並刷新
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("Error:", error);
+                        alert("Failed to submit response.");
+                    }
+                });
+            };
+
+            if (surveyID) {
+                loadSurveyDetails(surveyID);
+            } else {
+                alert("Invalid survey ID");
+            }
+        });
+
+    </script>
+</body>
+</html>

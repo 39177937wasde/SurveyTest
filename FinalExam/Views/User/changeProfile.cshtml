@@ -1,0 +1,42 @@
+﻿@model FinalExam.Models.Entities.ChangeProfileModel;
+
+<h2>Change Profile</h2>
+<hr />
+
+<form asp-action="ChangeProfile" method="post">
+    <div asp-validation-summary="ModelOnly"></div>
+    <div class="form-inline">
+        <div class="row">
+            <div class="col">
+                <div>
+                    <span>原名字</span>
+                    <input name="origin" type="text" class="form-control d-inline" id="modifiedName" value="@Model.Name" readonly />
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="modifiedName" class="me-2">修改後名字</label>
+                    <input type="text" class="form-control d-inline" id="modifiedName" name="changeName" />
+                    <span class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <br />
+    <div class="form-group">
+        <label>修改後密碼</label>
+        <input class="form-control" name="changePassword" />
+        <span class="text-danger"></span>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">確定修改</button>
+</form>
+
+<br />
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
